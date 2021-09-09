@@ -38,7 +38,7 @@ function setrika () {
   })
 }
   
-async function urutan() {
+async function wash() {
   await rendam();
   await kucek();
   await bilas();
@@ -46,7 +46,7 @@ async function urutan() {
   setrika();
 }
 
-urutan();
+wash();
   
   
 // Output:
