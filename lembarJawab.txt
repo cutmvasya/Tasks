@@ -1,0 +1,134 @@
+1. Konsep:
+a. Sebutkan entities (sing.: entity) yang terdapat pada ERD terlampir!
+/* jawaban disini */
+   - User
+   - Song
+   - Artist
+   - Album
+   - Genre
+b. Terdapat 6 relasi dalam ERD terlampir, sebutkan jenis relasi dari masing-masing relasi!
+/* jawaban disini */
+Album contains Song : one-to-many
+The album consists of Genre : many-to-one
+Album created by Artist : (one or many)-to-one
+User chooses Song : many-to-many
+Artist prepare Song : one-to-many
+Song corresponds to a Genre : many-to-one
+
+c. Dari 7 Foreign Key (FK), ada 1 FK yang tidak diperlukan. Pilih FK apa dan dari tabel mana dan sertakan alasanmu!
+/* jawaban disini */
+song dari table Album, karena satu album punya banyak lagu, jadi kalau mau lihat lagu apa saja yang ada pada album tersebut, 
+kita bisa lihat dari table song, karna pada table song terdapat column genre(fk)
+
+2. Tuliskan query SQL untuk mengimplementasikan desain atau ERD (Entity Relationship Diagram) terlampir!
+Perhatikan atribut-atribut, tipe data, dan relasi setiap tabel!
+Atribut yang tidak perlu:
+User: FirstName, LastName, Email, Password, SignUpDate, ProfilePic.
+Song: Duration, Path, AlbumOrder, Plays.
+Album: ArtworkPath.
+Ingat, many-to-many perlu tabel penghubung! (Jenis relasi berdasarkan garis penghubung bisa dilihat disini https://d2slcw3kip6qmk.cloudfront.net/marketing/pages/chart/erd-symbols/ERD-Notation.PNG)
+
+Tulis query di bawah sini:
+/* query disini */
+- create table
+CREATE TABLE genre (
+	id serial,
+	Name varchar(255),
+	PRIMARY KEY (id)
+)
+CREATE TABLE artist (
+	id serial,
+	Name varchar(255),
+	PRIMARY KEY (id)
+)
+CREATE TABLE album (
+	id serial,
+	Name varchar(255),
+	genre_id integer,
+	artist_id integer,
+	PRIMARY KEY (id)
+)
+
+ALTER TABLE album
+    ADD CONSTRAINT genre_id FOREIGN KEY (genre_id)
+    REFERENCES genre (id)
+ALTER TABLE album
+    ADD CONSTRAINT artist_id FOREIGN KEY (artist_id)
+    REFERENCES artist (id)
+
+ALTER TABLE album
+    ADD COLUMN song_id integer;
+ALTER TABLE album
+    ADD CONSTRAINT song_id FOREIGN KEY (song_id)
+    REFERENCES song (id)
+
+CREATE TABLE song (
+	id serial,
+	Name varchar(255),
+	genre_id integer, 
+	artist_id integer,
+	album_id integer,
+	PRIMARY KEY (id)
+)
+ALTER TABLE song
+    ADD CONSTRAINT genre_id FOREIGN KEY (genre_id)
+    REFERENCES genre (id)
+ALTER TABLE song
+    ADD CONSTRAINT artist_id FOREIGN KEY (artist_id)
+    REFERENCES artist (id)
+ALTER TABLE song
+    ADD CONSTRAINT album_id FOREIGN KEY (album_id)
+    REFERENCES album (id)
+
+CREATE TABLE users (
+	id serial,
+	username varchar(255),
+	PRIMARY KEY (id)
+)
+
+3. Melalui pgAdmin, sertakan screenshot seluruh tabel yang anda buat!
+Silahkan di-upload ke cloud (imgur, google drive, dsb) dan pastikan link tidak private!
+
+Tulis url screenshot di bawah sini:
+/* url disini */
+
+https://drive.google.com/drive/folders/1qH6xt8ATxRuedSxGMsTv7485FJtYdACT?usp=sharing
+
+4. Tuliskan query dari persoalan berikut:
+a. Saya ingin tahu seluruh daftar user.
+/* query disini */
+
+SELECT * from users
+
+b. Saya ingin tahu seluruh daftar lagu beserta genrenya.
+/* query disini */
+
+SELECT song.name as song, genre.name as genre
+FROM song
+Inner join genre On song.genre_id = genre.id
+
+c. Saya ingin tahu daftar seluruh album dari "Noah".
+/* query disini */
+
+SELECT album.name, artist.name
+FROM album
+Inner join artist On album.artist_id = artist.id
+where artist.name = 'Noah'
+
+d. Saya ingin tahu daftar seluruh lagu bergenre "Dangdut".
+/* query disini */
+
+SELECT song.name, genre.name
+FROM song
+Inner join genre On song.genre_id = genre.id
+where genre.name = 'Dangdut'
+
+e. Saya ingin tahu daftar seluruh genre yang dipilih oleh user dengan username fadhlanmakarim.
+/* query disini */
+
+SELECT users.username, genre.name as genre
+FROM users
+Inner join user_song On user_song.user_id = users.id
+Inner join song On user_song.song_id = song.id
+inner join genre on song.genre_id = genre.id
+where users.username = 'fadhlanmakarim'
