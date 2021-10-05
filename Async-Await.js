@@ -43,7 +43,7 @@ async function wash() {
   await kucek();
   await bilas();
   await jemur();
-  setrika();
+  await setrika();
 }
 
 wash();
